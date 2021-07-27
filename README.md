@@ -54,6 +54,7 @@ for i in range(0, games):
                 break
     
         state, reward, done, info = env.step(action, player=player)
+        # switch players
         if player == 1:
             player = 2
         else:
