@@ -1,0 +1,1 @@
+from gym_tic_tac_toe3D.envs.tic_tac_toe_3d import TicTacToe3D
