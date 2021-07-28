@@ -35,6 +35,8 @@ Here is an example on how to create the environment:
 ```python
 import gym
 import gym_tic_tac_toe3D
+import time
+
 env = gym.make("tic_tac_toe3D-v0")
 
 games = 3  # best of three
@@ -46,13 +48,13 @@ for i in range(0, games):
     player = 1
     while not done:
         env.render(player=player)
-        plt.pause(0.5)
+        time.sleep(0.5)
         while True:
             action = env.action_space.sample()
             # Need to check if action is available in state space
-            if state[action] == 0:  
+            if state[action] == 0:
                 break
-    
+
         state, reward, done, info = env.step(action, player=player)
         # switch players
         if player == 1:
@@ -61,9 +63,8 @@ for i in range(0, games):
             player = 1
     # final render after completion of game to see final move
     env.render(player=player)
-    plt.pause(1)
+    time.sleep(1)
     player1_reward += reward[0]
     player2_reward += reward[1]
-    
     
 ```
