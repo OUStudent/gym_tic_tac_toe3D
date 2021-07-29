@@ -58,6 +58,7 @@ Here is an example on how to create the environment with random agents:
 import gym
 import gym_tic_tac_toe3D
 import matplotlib.pyplot as plt
+
 env = gym.make("tic_tac_toe3D-v0")
 
 games = 3  # best of three
@@ -95,6 +96,7 @@ Here is another example between two agents named `p1` and `p2`:
 import gym
 import gym_tic_tac_toe3D
 import matplotlib.pyplot as plt
+
 def play(p1, p2, show=False, num_games=3):
     env = gym.make("tic_tac_toe3D-v0")
     player1_reward = 0
@@ -128,4 +130,37 @@ def play(p1, p2, show=False, num_games=3):
         player1_reward += reward[0]
         player2_reward += reward[1]
     return player1_reward, player2_reward
+```
+
+# Custom Rewards
+
+If the default rewarding scheme described above does not suite your likings, there is an option to create custom
+rewarding. The rewards available for changing are only for the turn slots described above, meaning `[3,5,7,9,else]` for 
+rewarding or penalizing players 1 and 2. Here is an example:
+
+Suppose I want the following rewarding scheme:
+
+| Turns Taken  | Player 1 Win:  | P1 Reward  | P2 Penalize  | Player 2 Win:  | P1 Penalize | P2 Reward |
+|---|---|---|---|---|---|---|
+| <= 3  | 1   |  20 | -2  | 2  | -20|     40 |
+| <=5  |  1 |  18 |  -4 |  2 |   -16 | 30  |
+| <=7  |  1 |  12 |  -6 |  2 |   -12 |  20 |
+| <=9  |  1 |  8 | -8  |  2 |  -10  |  10 |
+| Else  | 1  | 5  |  -10 | 2  |  -10  |  10 |
+
+Then this is how to create it:
+
+```python
+import gym
+import gym_tic_tac_toe3D
+
+cust_p1_win = [20, 18, 12, 8, 5]
+cust_p2_win = [40, 30, 20, 10, 10]
+cust_p1_lose = [-20, -16, -12, -10, -10]
+cust_p2_lose = [-2, -4, -6, -8, -10]
+
+env = gym.make("tic_tac_toe3D-v0")
+env.custom_rewards(reward_p1=cust_p1_win, reward_p2=cust_p2_win,
+                   pen_p1=cust_p1_lose, pen_p2=cust_p2_lose)
+# do other stuff
 ```
