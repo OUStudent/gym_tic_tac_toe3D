@@ -3,10 +3,38 @@ from gym import spaces
 import numpy as np
 import matplotlib.pyplot as plt
 
-class TicTacToe3D(gym.Env):
+
+class TicTacToe3DEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
+    def custom_rewards(self, reward_p1=None, pen_p2=None, reward_p2=None,
+                 pen_p1=None):
+        if pen_p1 and len(pen_p1) != 5:
+            print("ERROR: pen_p1 must be of size 5 only")
+        if pen_p2 and len(pen_p2) != 5:
+            print("ERROR: pen_p2 must be of size 5 only")
+        if reward_p1 and len(reward_p1) != 5:
+            print("ERROR: reward_p1 must be of size 5 only")
+        if reward_p2 and len(reward_p2) != 5:
+            print("ERROR: reward_p2 must be of size 5 only")
+        if pen_p1 is None:
+            pen_p1 = [-20, -18, -16, -14, -10]
+        if reward_p2 is None:
+            reward_p2 = [40, 36, 32, 28, 20]
+        if pen_p2 is None:
+            pen_p2 = [-10, -9, -8, -7, -5]
+        if reward_p1 is None:
+            reward_p1 = [20, 18, 16, 14, 10]
+        self.pen_p1 = pen_p1
+        self.reward_p2 = reward_p2
+        self.pen_p2 = pen_p2
+        self.reward_p1 = reward_p1
+
     def __init__(self):
+        self.pen_p1 = [-20, -18, -16, -14, -10]
+        self.reward_p2 = [40, 36, 32, 28, 20]
+        self.pen_p2 = [-10, -9, -8, -7, -5]
+        self.reward_p1 = [20, 18, 16, 14, 10]
         self.state = []
         super().__init__()
         self.action_space = spaces.Discrete(27)
@@ -112,7 +140,6 @@ class TicTacToe3D(gym.Env):
                 self.colors[i1, i2, i3] = [0, 0, 1, 1]
         self.ax.voxels(self.data, facecolors=self.colors, edgecolors='grey', shade=False)
 
-
     def step(self, action, player=1):
         self.start = 1
         if self.done:
@@ -140,16 +167,23 @@ class TicTacToe3D(gym.Env):
         win = self.check_win(player=player)
         if win:
             self.done = True
-            if self.turn_count <= 3:
-                reward = [20, -10]
-            elif self.turn_count <= 5:
-                reward = [18, -8]
-            elif self.turn_count <= 7:
-                reward = [16, -6]
-            elif self.turn_count <= 9:
-                reward = [14, -4]
+            if player == 1:
+                w = self.reward_p1
+                l = self.pen_p2
             else:
-                reward = [10, -2]
+                w = self.reward_p2
+                l = self.pen_p1
+
+            if self.turn_count <= 3:
+                reward = [w[0], l[0]]
+            elif self.turn_count <= 5:
+                reward = [w[1], l[1]]
+            elif self.turn_count <= 7:
+                reward = [w[2], l[2]]
+            elif self.turn_count <= 9:
+                reward = [w[3], l[3]]
+            else:
+                reward = [w[4], l[4]]
 
             if player == 2:
                 reward = reward[::-1]
@@ -280,5 +314,6 @@ class TicTacToe3D(gym.Env):
             return True
         else:
             return False
+
 
 
